@@ -565,8 +565,8 @@ void PacketStreamReader::ProcessMessagesUntilSourcePacket(int &nxt_src_id, int64
             }
             nxt_src_id = static_cast<int>(src_id);
             // only if the size is dynamic read the size from the data
-            if (num_src_bytes && *num_src_bytes == 0) {
-                *num_src_bytes = ReadCompressedUnsignedInt();
+            if (num_src_bytes && num_src_bytes == 0) {
+                num_src_bytes = ReadCompressedUnsignedInt();
             }
             CacheSrcPacketLocationIncFrame(src_packet_pos, nxt_src_id);
             // return, don't break. We're in the middle of this packet.
