@@ -21,7 +21,7 @@ struct RealSenseVideo : public VideoInterface, public VideoPropertiesInterface, 
 public:
 
     // Open all RGB and Depth streams from all devices
-    RealSenseVideo(ImageDim dim=ImageDim(640,480), int fps=30);
+    RealSenseVideo(ImageDim dim=ImageDim(640,480), int fps=30, double pwr=16);
 
     // Open streams specified
     // TODO
@@ -65,6 +65,13 @@ public:
 
     //! Implement VideoPlaybackInterface::Seek
     int Seek(int frameid);
+
+    // Get the current laser power level of ith sensor
+    void GetCurrentPower(int idx, double *power);
+
+    // Set ith device's laser power to power
+    void SetPower(int idx, double *power);
+
 
 protected:
     size_t sizeBytes;
