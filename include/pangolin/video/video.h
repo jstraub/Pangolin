@@ -80,6 +80,8 @@
 //              fpsN=25|30|60|...
 //  e.g. "depthsense://"
 //  e.g. "depthsense:[img1=depth,img2=rgb]//"
+//  todo: add 
+//  e.g.: "depthsense:[power_level]//
 //
 // pleora - USB 3 vision cameras accepts any option in the same format reported by eBUSPlayer
 //  e.g. for lightwise cameras: "pleora:[size=512x256,pos=712x512,sn=00000274,ExposureTime=10000,PixelFormat=Mono12p,AcquisitionMode=SingleFrame,TriggerSource=Line0,TriggerMode=On]//"
