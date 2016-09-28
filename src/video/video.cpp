@@ -585,8 +585,18 @@ VideoInterface* OpenVideo(const Uri& uri)
     {
         const ImageDim dim = uri.Get<ImageDim>("size", ImageDim(640,480));
         const unsigned int fps = uri.Get<unsigned int>("fps", 30);
+        const unsigned int power = uri.Get<unsigned int>("power", 16);
+        const bool register = uri.Get<bool>("register", false);
 
         RealSenseVideo* rsvi = new RealSenseVideo(dim, fps);
+        rsvi->SetPowers((double)power);
+        rsvi->SetRegister(register);
+
+        //todo: delete
+        //make sure the power is changed
+        double powers[1];
+        rsvi->GetCurrentPower(0, powers);
+        printf("current power: %f\n", powers[0]);
         video = rsvi;
     }else
 #endif

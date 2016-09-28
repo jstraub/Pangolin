@@ -3,16 +3,12 @@
 
 namespace pangolin {
 
-RealSenseVideo::RealSenseVideo(ImageDim dim, int fps, double pwr) 
+RealSenseVideo::RealSenseVideo(ImageDim dim, int fps) 
   : dim_(dim), fps_(fps) {
   ctx_ = new rs::context();
   sizeBytes = 0;
   for (int32_t i=0; i<ctx_->get_device_count(); ++i) {
     devs_.push_back(ctx_->get_device(i));
-  // todo: if realsense:://[power_level], then set all devices to that power level
-    double pwr_level[] = {pwr};
-    SetPower(i, pwr_level);
-
     devs_[i]->enable_stream(rs::stream::depth, dim_.x, dim_.y, rs::format::z16, fps_);
     StreamInfo streamD(VideoFormatFromString("GRAY16LE"), dim_.x, dim_.y, dim_.x*2, 0);
     streams.push_back(streamD);
@@ -26,18 +22,6 @@ RealSenseVideo::RealSenseVideo(ImageDim dim, int fps, double pwr)
     devs_[i]->start();
   }
   total_frames = std::numeric_limits<int>::max();
-
-  //hack to see if the power is working //todo: delete
-  double power[1];
-  GetCurrentPower(0,power); //initially always 16
-
-  double setVal[1] ={1};
-  SetPower(0,setVal);
-
-  //check if vals are reset 
-  GetCurrentPower(0,power);
-  printf("done!\n");
-
 }
 
 RealSenseVideo::~RealSenseVideo() {
@@ -101,13 +85,29 @@ int RealSenseVideo::Seek(int frameid) {
 void RealSenseVideo::GetCurrentPower(int idx, double *power) {
   rs::option opt[] = {rs::option::f200_laser_power};
   devs_[idx]->get_options(opt,1,power);
-  printf("current power %f\n", power[0]);
+  // printf("current power %f\n", power[0]);
 }
 
-void RealSenseVideo::SetPower(int idx, double *power){
+void RealSenseVideo::SetPower(int idx, double power){
+  double power_[] = {power};
   rs::option opt[] = {rs::option::f200_laser_power};
-  devs_[idx]->set_options(opt,1,power);
+  devs_[idx]->set_options(opt,1,power_);
   printf("set the power!\n");
+}
+
+void RealSenseVideo::SetPowers(double power) {
+  for (int32_t i=0; i<ctx_->get_device_count(); ++i) {
+    SetPower(i,power);
+  }
+  printf("set all the power!\n");
+}
+
+void RealSenseVideo::SetRegister(bool register) {
+  for (int32_t i=0; i<ctx_->get_device_count(); ++i) {
+    // todo: set the registration
+
+  }
+  printf("set all the registration\n");
 }
 
 }
