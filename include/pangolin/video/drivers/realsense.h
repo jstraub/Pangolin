@@ -21,7 +21,7 @@ struct RealSenseVideo : public VideoInterface, public VideoPropertiesInterface, 
 public:
 
     // Open all RGB and Depth streams from all devices
-    RealSenseVideo(ImageDim dim=ImageDim(640,480), int fps=30, double pwr=16);
+    RealSenseVideo(ImageDim dim=ImageDim(640,480), int fps=30);
 
     // Open streams specified
     // TODO
@@ -70,7 +70,12 @@ public:
     void GetCurrentPower(int idx, double *power);
 
     // Set ith device's laser power to power
-    void SetPower(int idx, double *power);
+    void SetPower(int idx, double power);
+
+    // Set all devices' laser power to power
+    void SetPowers(double power);
+
+    // Set all devices' register
 
 
 protected:
