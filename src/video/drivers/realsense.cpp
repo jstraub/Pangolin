@@ -3,12 +3,15 @@
 
 namespace pangolin {
 
-RealSenseVideo::RealSenseVideo(ImageDim dim, int fps) 
+RealSenseVideo::RealSenseVideo(ImageDim dim, int fps, double pwr) 
   : dim_(dim), fps_(fps) {
   ctx_ = new rs::context();
   sizeBytes = 0;
   for (int32_t i=0; i<ctx_->get_device_count(); ++i) {
     devs_.push_back(ctx_->get_device(i));
+  // todo: if realsense:://[power_level], then set all devices to that power level
+    double pwr_level[] = {pwr};
+    SetPower(i, pwr_level);
 
     devs_[i]->enable_stream(rs::stream::depth, dim_.x, dim_.y, rs::format::z16, fps_);
     StreamInfo streamD(VideoFormatFromString("GRAY16LE"), dim_.x, dim_.y, dim_.x*2, 0);
@@ -23,6 +26,18 @@ RealSenseVideo::RealSenseVideo(ImageDim dim, int fps)
     devs_[i]->start();
   }
   total_frames = std::numeric_limits<int>::max();
+
+  //hack to see if the power is working //todo: delete
+  double power[1];
+  GetCurrentPower(0,power); //initially always 16
+
+  double setVal[1] ={1};
+  SetPower(0,setVal);
+
+  //check if vals are reset 
+  GetCurrentPower(0,power);
+  printf("done!\n");
+
 }
 
 RealSenseVideo::~RealSenseVideo() {
@@ -81,6 +96,18 @@ int RealSenseVideo::GetTotalFrames() const {
 int RealSenseVideo::Seek(int frameid) {
   // TODO
   return -1;
+}
+
+void RealSenseVideo::GetCurrentPower(int idx, double *power) {
+  rs::option opt[] = {rs::option::f200_laser_power};
+  devs_[idx]->get_options(opt,1,power);
+  printf("current power %f\n", power[0]);
+}
+
+void RealSenseVideo::SetPower(int idx, double *power){
+  rs::option opt[] = {rs::option::f200_laser_power};
+  devs_[idx]->set_options(opt,1,power);
+  printf("set the power!\n");
 }
 
 }
