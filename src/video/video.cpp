@@ -643,6 +643,7 @@ VideoInterface* OpenVideo(const Uri& uri)
         nivid->SetDepthCloseRange( uri.Get<bool>("closerange",false) );
         nivid->SetDepthHoleFilter( uri.Get<bool>("holefilter",false) );
         nivid->SetDepthColorSyncEnabled( uri.Get<bool>("coloursync",false) );
+        nivid->SetRegisterDepthToImage( uri.Get<bool>("register",false) );
         nivid->SetPlaybackSpeed(realtime ? 1.0f : -1.0f);
         nivid->SetAutoExposure(true);
         nivid->SetAutoWhiteBalance(true);
