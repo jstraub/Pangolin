@@ -18,10 +18,10 @@ namespace pangolin
 //! Interface to video capture sources
 struct RealSenseVideo : public VideoInterface, public VideoPropertiesInterface, public VideoPlaybackInterface
 {
-public:
+ public:
 
     // Open all RGB and Depth streams from all devices
-    RealSenseVideo(ImageDim dim=ImageDim(640,480), int fps=30);
+    RealSenseVideo(ImageDim dim=ImageDim(640,480), int fps=30, bool registerRGBD=false);
 
     // Open streams specified
     // TODO
@@ -75,9 +75,6 @@ public:
     // Set all devices' laser power to power
     void SetPowers(double power);
 
-    // Set all devices' register
-
-
 protected:
     size_t sizeBytes;
 
@@ -95,6 +92,7 @@ protected:
 
     ImageDim  dim_;
     int fps_;
+    bool registerRGBD_;
 };
 
 }

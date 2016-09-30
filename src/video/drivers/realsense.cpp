@@ -3,12 +3,14 @@
 
 namespace pangolin {
 
-RealSenseVideo::RealSenseVideo(ImageDim dim, int fps) 
-  : dim_(dim), fps_(fps) {
+RealSenseVideo::RealSenseVideo(ImageDim dim, int fps, bool registerRGBD)
+  : dim_(dim), fps_(fps), registerRGBD_(registerRGBD) {
+
   ctx_ = new rs::context();
   sizeBytes = 0;
   for (int32_t i=0; i<ctx_->get_device_count(); ++i) {
     devs_.push_back(ctx_->get_device(i));
+
     devs_[i]->enable_stream(rs::stream::depth, dim_.x, dim_.y, rs::format::z16, fps_);
     StreamInfo streamD(VideoFormatFromString("GRAY16LE"), dim_.x, dim_.y, dim_.x*2, 0);
     streams.push_back(streamD);
@@ -57,7 +59,11 @@ bool RealSenseVideo::GrabNext(unsigned char* image, bool wait) {
     if (wait) {
       devs_[i]->wait_for_frames();
     }
-    memcpy(out_img, devs_[i]->get_frame_data(rs::stream::depth), streams[i*2].SizeBytes());
+    if (registerRGBD_) {
+        memcpy(out_img, devs_[i]->get_frame_data(rs::stream::depth_aligned_to_color), streams[i*2].SizeBytes());
+    } else {
+        memcpy(out_img, devs_[i]->get_frame_data(rs::stream::depth), streams[i*2].SizeBytes());
+    }
     out_img += streams[i*2].SizeBytes();
     memcpy(out_img, devs_[i]->get_frame_data(rs::stream::color), streams[i*2+1].SizeBytes());
     out_img += streams[i*2+1].SizeBytes();
@@ -100,14 +106,6 @@ void RealSenseVideo::SetPowers(double power) {
     SetPower(i,power);
   }
   printf("set all the power!\n");
-}
-
-void RealSenseVideo::SetRegister(bool register) {
-  for (int32_t i=0; i<ctx_->get_device_count(); ++i) {
-    // todo: set the registration
-
-  }
-  printf("set all the registration\n");
 }
 
 }
