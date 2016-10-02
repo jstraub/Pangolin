@@ -27,6 +27,7 @@
  */
 
 #include <pangolin/video/drivers/openni2.h>
+#include <pangolin/utils/timer.h>
 
 #include <PS1080.h>
 #include <OniVersion.h>
@@ -557,6 +558,8 @@ bool OpenNiVideo2::GrabNext( unsigned char* image, bool wait )
         if(rc != openni::STATUS_OK) {
             pango_print_error("Error reading frame:\n%s", openni::OpenNI::getExtendedError() );
         }
+
+        (*streams_properties)[i]["hosttime_us"] = pangolin::Time_us(pangolin::TimeNow());
 
         const bool toGreyscale = false;
         if(toGreyscale) {
