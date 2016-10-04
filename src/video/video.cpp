@@ -590,7 +590,9 @@ VideoInterface* OpenVideo(const Uri& uri)
 
         RealSenseVideo* rsvi = new RealSenseVideo(dim, fps, registerRGBD);
         rsvi->SetPowers((double)power);
-
+        std::cout << "here!" <<std::endl;   
+        rsvi->GetSerial(0);
+        rsvi->GetSerial(1);
         //todo: delete
         //make sure the power is changed
         double powers[1];

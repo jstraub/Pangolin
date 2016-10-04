@@ -1,5 +1,7 @@
 #include <librealsense/rs.hpp>
 #include <pangolin/video/drivers/realsense.h>
+#include <string>
+#include <iostream>
 
 namespace pangolin {
 
@@ -106,6 +108,16 @@ void RealSenseVideo::SetPowers(double power) {
     SetPower(i,power);
   }
   printf("set all the power!\n");
+}
+
+const char* RealSenseVideo::GetSerial(int idx){
+  if (devs_.size()>0){
+    const char* serialNumber = devs_[idx]->get_serial();
+    std::cout << "serialnumber: " << serialNumber << std::endl;
+    device_properties["serial"] = serialNumber;
+    return serialNumber;
+  } 
+  return 0;
 }
 
 }
