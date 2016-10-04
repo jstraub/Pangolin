@@ -75,6 +75,10 @@ struct RealSenseVideo : public VideoInterface, public VideoPropertiesInterface, 
     // Set all devices' laser power to power
     void SetPowers(double power);
 
+    // Get ith device's serial number
+    const char* GetSerial(int idx);
+
+
 protected:
     size_t sizeBytes;
 
