@@ -369,6 +369,7 @@ void OpenNiVideo2::UpdateProperties()
       char serialNumber[1024];
       devices[i].getProperty(ONI_DEVICE_PROPERTY_SERIAL_NUMBER, &serialNumber);
       jsdevice["ONI_DEVICE_PROPERTY_SERIAL_NUMBER"] = std::string(serialNumber);
+      jsdevice["serial_number"] = std::string(serialNumber);
 #undef SET_PARAM
     }
 
