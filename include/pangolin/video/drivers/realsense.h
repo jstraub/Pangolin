@@ -66,18 +66,20 @@ struct RealSenseVideo : public VideoInterface, public VideoPropertiesInterface, 
     //! Implement VideoPlaybackInterface::Seek
     int Seek(int frameid);
 
-    // Get the current laser power level of ith sensor
-    void GetCurrentPower(int idx, double *power);
+    /// Get the current laser power level of ith sensor
+    double GetCurrentPower(int idx);
 
-    // Set ith device's laser power to power
+    /// Set ith device's laser power to power
     void SetPower(int idx, double power);
 
-    // Set all devices' laser power to power
+    /// Set all devices' laser power to power
     void SetPowers(double power);
 
-    // Get ith device's serial number
-    const char* GetSerial(int idx);
+    /// Get ith device's serial number
+    std::string GetSerial(int idx);
 
+    /// Update Sensors Properties
+    void UpdateProperties();
 
 protected:
     size_t sizeBytes;
