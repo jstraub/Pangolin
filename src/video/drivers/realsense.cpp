@@ -13,18 +13,23 @@ RealSenseVideo::RealSenseVideo(ImageDim dim, int fps, bool registerRGBD)
   sizeBytes = 0;
   for (int32_t i=0; i<ctx_->get_device_count(); ++i) {
     devs_.push_back(ctx_->get_device(i));
+
     devs_[i]->enable_stream(rs::stream::depth, dim_.x, dim_.y,
         rs::format::z16, fps_);
+
     StreamInfo streamD(VideoFormatFromString("GRAY16LE"), dim_.x,
-        dim_.y, dim_.x*2, 0);
+        dim_.y, dim_.x*2, (uint8_t*)0+sizeBytes);
     streams.push_back(streamD);
 
     sizeBytes += streamD.SizeBytes();
+
     devs_[i]->enable_stream(rs::stream::color, dim_.x, dim_.y,
         rs::format::rgb8, fps_);
+
     StreamInfo streamRGB(VideoFormatFromString("RGB24"), dim_.x,
         dim_.y, dim_.x*3, (uint8_t*)0+sizeBytes);
     streams.push_back(streamRGB);
+    
     sizeBytes += streamRGB.SizeBytes();
 
     devs_[i]->start();
@@ -64,7 +69,7 @@ RealSenseVideo::~RealSenseVideo() {
 
 void RealSenseVideo::Start() {
   for (int32_t i=0; i<ctx_->get_device_count(); ++i) {
-    devs_[i]->stop();
+    //devs_[i]->stop();
     devs_[i]->start();
   }
   current_frame_index = 0;
@@ -90,7 +95,10 @@ bool RealSenseVideo::GrabNext(unsigned char* image, bool wait) {
   for (int32_t i=0; i<ctx_->get_device_count(); ++i) {
     if (wait) {
       devs_[i]->wait_for_frames();
+    } else {
+      devs_[i]->poll_for_frames();
     }
+
     if (registerRGBD_) {
         memcpy(out_img, devs_[i]->get_frame_data(rs::stream::depth_aligned_to_color), streams[i*2].SizeBytes());
     } else {
