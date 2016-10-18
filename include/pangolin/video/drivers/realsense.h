@@ -47,6 +47,9 @@ struct RealSenseVideo : public VideoInterface, public VideoPropertiesInterface, 
     //! Implement VideoInput::GrabNewest()
     bool GrabNewest( unsigned char* image, bool wait = true );
 
+    //! Grab turn on projector grab one frame and turn it off
+    bool GrabOne(int idx, unsigned char* image, double power=16);
+
     //! Implement VideoPropertiesInterface::Properties()
     const json::value& DeviceProperties() const {
         return device_properties;

@@ -118,6 +118,37 @@ bool RealSenseVideo::GrabNewest(unsigned char* image, bool wait) {
   return GrabNext(image, wait);
 }
 
+bool RealSenseVideo::GrabOne(int idx, unsigned char* image, double power) {
+  double powerBefore = GetCurrentPower(idx);
+
+  SetPower(idx, power);
+
+  for (int i=0; i<2; ++i) {
+    std::cout << i << ": " << pangolin::Time_us(pangolin::TimeNow()) << std::endl;
+    unsigned char* out_img = image;
+
+    devs_[idx]->wait_for_frames();
+
+    if (registerRGBD_) {
+      memcpy(out_img,
+          devs_[idx]->get_frame_data(rs::stream::depth_aligned_to_color),
+          streams[idx*2].SizeBytes());
+    } else {
+      memcpy(out_img, devs_[idx]->get_frame_data(rs::stream::depth),
+          streams[idx*2].SizeBytes());
+    }
+    out_img += streams[idx*2].SizeBytes();
+    (*streams_properties)[2*idx]["hosttime_us"] = pangolin::Time_us(pangolin::TimeNow());
+
+    memcpy(out_img, devs_[idx]->get_frame_data(rs::stream::color), streams[idx*2+1].SizeBytes());
+
+    (*streams_properties)[2*idx+1]["hosttime_us"] = pangolin::Time_us(pangolin::TimeNow());
+  }
+
+  SetPower(idx, powerBefore);
+  return true;
+}
+
 int RealSenseVideo::GetCurrentFrameId() const {
   return current_frame_index;
 }
