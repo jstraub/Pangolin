@@ -69,7 +69,7 @@ RealSenseVideo::~RealSenseVideo() {
 
 void RealSenseVideo::Start() {
   for (int32_t i=0; i<ctx_->get_device_count(); ++i) {
-    //devs_[i]->stop();
+    devs_[i]->stop();
     devs_[i]->start();
   }
   current_frame_index = 0;
