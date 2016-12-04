@@ -118,16 +118,17 @@ bool RealSenseVideo::GrabNewest(unsigned char* image, bool wait) {
   return GrabNext(image, wait);
 }
 
-bool RealSenseVideo::GrabOne(int idx, unsigned char* image, double power) {
-  double powerBefore = GetCurrentPower(idx);
+bool RealSenseVideo::GrabOne(int idx, unsigned char* image) {
+//  double powerBefore = GetCurrentPower(idx);
+//  SetPower(idx, power);
 
-  SetPower(idx, power);
-
-  for (int i=0; i<2; ++i) {
-    std::cout << i << ": " << pangolin::Time_us(pangolin::TimeNow()) << std::endl;
+//  for (int i=0; i<1; ++i) {
+//    std::cout << i << ": " << pangolin::Time_us(pangolin::TimeNow()) << std::endl;
+//    uint64_t t0 = pangolin::Time_us(pangolin::TimeNow());
     unsigned char* out_img = image;
-
     devs_[idx]->wait_for_frames();
+//    uint64_t t1 = pangolin::Time_us(pangolin::TimeNow());
+//    std::cout << "waited " << (t1-t0)*1e-6 << " s for frame" << std::endl;
 
     if (registerRGBD_) {
       memcpy(out_img,
@@ -141,11 +142,10 @@ bool RealSenseVideo::GrabOne(int idx, unsigned char* image, double power) {
     (*streams_properties)[2*idx]["hosttime_us"] = pangolin::Time_us(pangolin::TimeNow());
 
     memcpy(out_img, devs_[idx]->get_frame_data(rs::stream::color), streams[idx*2+1].SizeBytes());
-
     (*streams_properties)[2*idx+1]["hosttime_us"] = pangolin::Time_us(pangolin::TimeNow());
-  }
+//  }
 
-  SetPower(idx, powerBefore);
+//  SetPower(idx, powerBefore);
   return true;
 }
 
